@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.EventSystems;
 
 public class Touch : MonoBehaviour
 {
@@ -21,24 +22,36 @@ public class Touch : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (Input.GetMouseButtonUp(0) || Input.GetTouch(0).phase == TouchPhase.Ended)
-        {
-            //will need to be changed when more explosives are added in, maybe add explosion radius to the list?
+        //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) //this for android
+        //{
+        //    // Check if finger is over a UI element
+        //    if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+        //    {
+                
+        //    }
+        //}
 
-            //find the position that was clicked
-            Vector3 pos = Vector3.zero;
-
-            Ray ray = Camera.main.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+        if (!EventSystem.current.IsPointerOverGameObject()) //this for pc
+        {            
+            if (Input.GetMouseButtonUp(0) || Input.GetTouch(0).phase == TouchPhase.Ended)
             {
-                pos = hit.point;
+                //will need to be changed when more explosives are added in, maybe add explosion radius to the list?
+
+                //find the position that was clicked
+                Vector3 pos = Vector3.zero;
+
+                Ray ray = Camera.main.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    pos = hit.point;
+                }
+
+                //instantiate a splodie thing where clicked
+                GameObject go = Instantiate(Resources.Load("SplodieStuff"), pos, Quaternion.identity) as GameObject;
             }
-
-            //instantiate a splodie thing where clicked
-            GameObject go = Instantiate(Resources.Load("SplodieStuff"), pos, Quaternion.identity) as GameObject;
         }
-
+       
         //rotation and height check
         if (Input.GetTouch(0).phase == TouchPhase.Moved && Input.touchCount == 1)
         {

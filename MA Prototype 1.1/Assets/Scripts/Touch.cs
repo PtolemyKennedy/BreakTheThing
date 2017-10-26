@@ -22,12 +22,28 @@ public class Touch : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) //this for android
+        //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) //this for android, might not work
         //{
         //    // Check if finger is over a UI element
         //    if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
         //    {
-                
+        //if (Input.GetTouch(0).phase == TouchPhase.Ended)
+        //{
+        //    //will need to be changed when more explosives are added in, maybe add explosion radius to the list?
+
+        //    //find the position that was clicked
+        //    Vector3 pos = Vector3.zero;
+
+        //    Ray ray = Camera.main.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit hit;
+        //    if (Physics.Raycast(ray, out hit))
+        //    {
+        //        pos = hit.point;
+        //    }
+
+        //    //instantiate a splodie thing where clicked
+        //    GameObject go = Instantiate(Resources.Load("SplodieStuff"), pos, Quaternion.identity) as GameObject;
+        //}
         //    }
         //}
 
@@ -48,7 +64,7 @@ public class Touch : MonoBehaviour
                 }
 
                 //instantiate a splodie thing where clicked
-                GameObject go = Instantiate(Resources.Load("SplodieStuff"), pos, Quaternion.identity) as GameObject;
+                Instantiate(Resources.Load("SplodieStuff"), pos, Quaternion.identity);
             }
         }
        
@@ -68,8 +84,7 @@ public class Touch : MonoBehaviour
                 cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, -2, 0));
             }
 
-
-
+            //move camera up and down
             if (touchPosition.y < Input.GetTouch(0).position.y)
             {
                 //move the camera up to a limit
@@ -90,7 +105,7 @@ public class Touch : MonoBehaviour
             touchPosition = Input.GetTouch(0).position;
         }
 
-        //zoom and pinch check
+        //zoom and pinch
         if (Input.touchCount == 2)
         {
             //compare lengths and zoom accordingly

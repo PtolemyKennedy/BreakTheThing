@@ -7,13 +7,13 @@ public class AoECubeBreaker : MonoBehaviour
 {
 
     Collider[] hitColliders;
-    public float sploderRadius = 5;
+    public float sploderRadius;
+    public float explosionForce;
 
 	// Use this for initialization
 	void Start ()
     {
         //add this button to the "explode the thing" buttons on click() so when it is clicked it calls the Explode() function
-
         UnityEngine.Events.UnityAction action1 = () => { Explode(); };
         GameObject.FindGameObjectWithTag("ExplodeTheThingButton").GetComponent<Button>().onClick.AddListener(action1);
     }
@@ -41,10 +41,12 @@ public class AoECubeBreaker : MonoBehaviour
             if (col.gameObject.tag == "splodable")
             {
                 //add force
-                col.gameObject.GetComponent<Rigidbody>().AddExplosionForce(500, transform.position, sploderRadius);
+                col.gameObject.GetComponent<Rigidbody>().AddExplosionForce(explosionForce, transform.position, sploderRadius);
             }
-
         }
-    }
 
+        //pretty explosion stuff
+
+        Destroy(gameObject);
+    }
 }

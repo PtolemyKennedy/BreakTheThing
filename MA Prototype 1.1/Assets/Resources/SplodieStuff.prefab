@@ -92,5 +92,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c125219f46342c43a0e0eba2f708495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ButtonGameObject: {fileID: 0}
   sploderRadius: 5
+  explosionForce: 500

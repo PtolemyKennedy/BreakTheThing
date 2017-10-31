@@ -11,7 +11,12 @@ public class Touch : MonoBehaviour
 
     Vector2 touchPosition;
 
+    float rotateSpeed = 1.8f;
+    float heightSpeed = 0.12f;
+
     float pinchLength = 0;
+    float minZoom = 0; //local position of the camera not world
+    float maxZoom = 50; //local position of the camera not world
 
     // Use this for initialization
     void Start ()
@@ -22,34 +27,9 @@ public class Touch : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        //if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) //this for android, might not work
-        //{
-        //    // Check if finger is over a UI element
-        //    if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
-        //    {
-        //if (Input.GetTouch(0).phase == TouchPhase.Ended)
-        //{
-        //    //will need to be changed when more explosives are added in, maybe add explosion radius to the list?
-
-        //    //find the position that was clicked
-        //    Vector3 pos = Vector3.zero;
-
-        //    Ray ray = Camera.main.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-        //    RaycastHit hit;
-        //    if (Physics.Raycast(ray, out hit))
-        //    {
-        //        pos = hit.point;
-        //    }
-
-        //    //instantiate a splodie thing where clicked
-        //    GameObject go = Instantiate(Resources.Load("SplodieStuff"), pos, Quaternion.identity) as GameObject;
-        //}
-        //    }
-        //}
-
         if (!EventSystem.current.IsPointerOverGameObject()) //this for pc
         {            
-            if (Input.GetMouseButtonUp(0) || Input.GetTouch(0).phase == TouchPhase.Ended)
+            if (Input.GetMouseButtonUp(0) /*Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended*/)
             {
                 //will need to be changed when more explosives are added in, maybe add explosion radius to the list?
 
@@ -76,12 +56,12 @@ public class Touch : MonoBehaviour
             if (/*xDelta < xDeadzone*/ touchPosition.x < Input.GetTouch(0).position.x /*&& (touchPosition.x + Input.GetTouch(0).position.x) > 1*/)
             {
                 //rotate the camera left around the center
-                cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, 2, 0));
+                cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, rotateSpeed, 0));
             }
             else if (/*yDelta < yDeadzone*/touchPosition.x > Input.GetTouch(0).position.x)
             {
                 //rotate the camera right around the center
-                cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, -2, 0));
+                cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, -rotateSpeed, 0));
             }
 
             //move camera up and down
@@ -90,7 +70,7 @@ public class Touch : MonoBehaviour
                 //move the camera up to a limit
                 if (cameraRotator.GetComponent<Transform>().position.y <= 15)
                 {
-                    cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, 0.15f, 0));
+                    cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, heightSpeed, 0));
                 }
             }
             else if (touchPosition.y > Input.GetTouch(0).position.y)
@@ -98,7 +78,7 @@ public class Touch : MonoBehaviour
                 //move the camera down to a limit
                 if (cameraRotator.GetComponent<Transform>().position.y >= 2)
                 {
-                    cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, -0.15f, 0));
+                    cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, -heightSpeed, 0));
                 }
             }
 
@@ -112,16 +92,15 @@ public class Touch : MonoBehaviour
             if (pinchLength < Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position))
             {
                 //zoom in
-                if (mainCamera.GetComponent<Transform>().localPosition.z < -10)
+                if (mainCamera.GetComponent<Transform>().localPosition.z > minZoom)
                 {
                     mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, 0.5f));
-                }
-                
+                }              
             }
             else if (pinchLength > Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position))
             {
                 //zoom out
-                if (mainCamera.GetComponent<Transform>().localPosition.z > -20)
+                if (mainCamera.GetComponent<Transform>().localPosition.z < maxZoom)
                 {
                     mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, -0.5f));
                 }

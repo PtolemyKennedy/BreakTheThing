@@ -954,6 +954,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraRotator: {fileID: 138971938}
   mainCamera: {fileID: 96716217}
+  pinchDeadzone: 5
+  maxExplosives: 3
 --- !u!4 &811754668
 Transform:
   m_ObjectHideFlags: 0

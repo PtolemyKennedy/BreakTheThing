@@ -5,9 +5,16 @@ using UnityEngine.UI;
 
 public class AoECubeBreaker : MonoBehaviour
 {
-
     Collider[] hitColliders;
+
+    /// <summary>
+    /// the radius of effect of the explosive
+    /// </summary>
     public float sploderRadius;
+
+    /// <summary>
+    /// the force the explosive applies to objects within its radius of effect
+    /// </summary>
     public float explosionForce;
 
 	// Use this for initialization
@@ -19,17 +26,25 @@ public class AoECubeBreaker : MonoBehaviour
     }
 	
 	// Update is called once per frame
-	void Update ()
-    {      
+	//void Update ()
+ //   {      
        
-    }
+ //   }
 
-    void FindObjectsInRadius(Vector3 center, float radius)
+        /// <summary>
+        /// finds all objects within a given radius of a point and adds them to the hitColliders array
+        /// </summary>
+        /// <param name="point">the central point of the sphere</param>
+        /// <param name="radius">the radius of the sphere</param>
+    void FindObjectsInRadius(Vector3 point, float radius)
     {
-        hitColliders = Physics.OverlapSphere(center, radius);       
-        
+        hitColliders = Physics.OverlapSphere(point, radius);              
     }
 
+
+    /// <summary>
+    /// explodes the explosive applying force to all objects that can be exploded within its radius of effect
+    /// </summary>
     public void Explode()
     {
         //find all objects in radius

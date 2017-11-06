@@ -5,27 +5,24 @@ using UnityEngine;
 public class JointBreak : MonoBehaviour
 {
     PointsSystem ps;
-    int strength;
+    FixedJoint fj;
+
 	// Use this for initialization
 	void Start ()
     {
         ps = GameObject.FindGameObjectWithTag("GameController").GetComponent<PointsSystem>();
-        FixedJoint fj = GetComponent<FixedJoint>();
-
-        if (fj != null)
-        {
-            strength = Mathf.RoundToInt(fj.breakForce);
-        }        
+        fj = GetComponent<FixedJoint>();      
 	}
 	
 	// Update is called once per frame
-	void Update ()
-    {
+	//void Update ()
+ //   {
 		
-	}
+	//}
 
+    //when the joint breaks score points relative to how difficult the joint was to break
     private void OnJointBreak(float breakForce)
     {
-        ps.ScorePoints(strength);
+        ps.ScorePoints(fj.breakForce);
     }
 }

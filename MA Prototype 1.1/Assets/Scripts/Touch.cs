@@ -12,6 +12,11 @@ public class Touch : MonoBehaviour
     Vector2 touchPosition;
 
     /// <summary>
+    /// is the player in first person mode
+    /// </summary>
+    bool isFirstPerson = false;
+
+    /// <summary>
     /// the rotation speed of the camera
     /// </summary>
     float rotateSpeed = 1.8f;
@@ -61,6 +66,11 @@ public class Touch : MonoBehaviour
     /// </summary>
     public int maxExplosives = 3;
 
+
+
+    private float vertical = 0;
+    private float horizontal = 0;
+
     // Use this for initialization
     //void Start()
     //{
@@ -71,7 +81,7 @@ public class Touch : MonoBehaviour
     void Update ()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
-        {            
+        {
             if (Input.GetMouseButtonUp(0) /*Input.touchCount = 1 && Input.GetTouch(0).phase == TouchPhase.Ended*/)
             {
                 //find the position that was clicked
@@ -95,105 +105,126 @@ public class Touch : MonoBehaviour
                 GetComponent<PointsSystem>().IsOverExplosivesCap = true;
             }
         }
-       
-        
-        //rotation and height check
-        if (Input.GetTouch(0).phase == TouchPhase.Moved && Input.touchCount == 2)
+
+        if (!isFirstPerson)
         {
-            //rotate camera
-            if (touchPosition.x < Input.GetTouch(0).position.x)
+            //rotation and height check
+            if (Input.GetTouch(0).phase == TouchPhase.Moved && Input.touchCount == 2)
             {
-                //rotate the camera left around the center
-                cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, rotateSpeed, 0));
-            }
-            else if (touchPosition.x > Input.GetTouch(0).position.x)
-            {
-                //rotate the camera right around the center
-                cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, -rotateSpeed, 0));
-            }
-            //move camera up and down
-            if (touchPosition.y < Input.GetTouch(0).position.y)
-            {
-                //move the camera up to a limit
-                if (cameraRotator.GetComponent<Transform>().position.y <= 15)
+                //rotate camera
+                if (touchPosition.x < Input.GetTouch(0).position.x)
                 {
-                    cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, heightSpeed, 0));
+                    //rotate the camera left around the center
+                    cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, rotateSpeed, 0));
                 }
-            }
-            else if (touchPosition.y > Input.GetTouch(0).position.y)
-            {
-                //move the camera down to a limit
-                if (cameraRotator.GetComponent<Transform>().position.y >= 2)
+                else if (touchPosition.x > Input.GetTouch(0).position.x)
                 {
-                    cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, -heightSpeed, 0));
+                    //rotate the camera right around the center
+                    cameraRotator.GetComponent<Transform>().Rotate(new Vector3(0, -rotateSpeed, 0));
                 }
-            }
-
-            touchPosition = Input.GetTouch(0).position;
-        }
-
-
-        //zoom and pinch
-        if (Input.touchCount == 2)
-        {
-            //check if currently zooming in/out
-            if (!isZooming)
-            {
-                //if not record the starting pinch length
-                startPinchLength = Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
-            }
-            else
-            {
-                float pinchLength;
-                pinchLength = Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
-
-                //determine the change in pinch length from the starting pinch length
-                deltaPinch = pinchLength - startPinchLength;
-
-                //if the change is greater than the deadzone attempt to zoom in/out
-                if (deltaPinch < -pinchDeadzone)
+                //move camera up and down
+                if (touchPosition.y < Input.GetTouch(0).position.y)
                 {
-                    //if camera is within the max/min zoom then zoom
-                    if (mainCamera.GetComponent<Transform>().localPosition.z < maxZoom)
+                    //move the camera up to a limit
+                    if (cameraRotator.GetComponent<Transform>().position.y <= 15)
                     {
-                        mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, -0.5f));
+                        cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, heightSpeed, 0));
                     }
                 }
-                else if (deltaPinch > pinchDeadzone)
+                else if (touchPosition.y > Input.GetTouch(0).position.y)
                 {
-                    if (mainCamera.GetComponent<Transform>().localPosition.z > minZoom)
+                    //move the camera down to a limit
+                    if (cameraRotator.GetComponent<Transform>().position.y >= 2)
                     {
-                        mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, 0.5f));
+                        cameraRotator.GetComponent<Transform>().Translate(new Vector3(0, -heightSpeed, 0));
                     }
                 }
+
+                touchPosition = Input.GetTouch(0).position;
             }
-            
 
-            ////compare lengths and zoom accordingly
-            //if (pinchLength < Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position))
-            //{
-            //    //zoom in
-            //    if (mainCamera.GetComponent<Transform>().localPosition.z > minZoom)
-            //    {
-            //        mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, 0.5f));
-            //    }              
-            //}
-            //else if (pinchLength > Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position))
-            //{
-            //    //zoom out
-            //    if (mainCamera.GetComponent<Transform>().localPosition.z < maxZoom)
-            //    {
-            //        mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, -0.5f));
-            //    }
-            //}
 
-            ////get length between both touches
-            //pinchLength = Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+            //zoom and pinch
+            if (Input.touchCount == 2)
+            {
+                //check if currently zooming in/out
+                if (!isZooming)
+                {
+                    //if not record the starting pinch length
+                    startPinchLength = Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+                }
+                else
+                {
+                    float pinchLength;
+                    pinchLength = Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+
+                    //determine the change in pinch length from the starting pinch length
+                    deltaPinch = pinchLength - startPinchLength;
+
+                    //if the change is greater than the deadzone attempt to zoom in/out
+                    if (deltaPinch < -pinchDeadzone)
+                    {
+                        //if camera is within the max/min zoom then zoom
+                        if (mainCamera.GetComponent<Transform>().localPosition.z < maxZoom)
+                        {
+                            mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, -0.5f));
+                        }
+                    }
+                    else if (deltaPinch > pinchDeadzone)
+                    {
+                        if (mainCamera.GetComponent<Transform>().localPosition.z > minZoom)
+                        {
+                            mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, 0.5f));
+                        }
+                    }
+                }
+                ////compare lengths and zoom accordingly
+                //if (pinchLength < Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position))
+                //{
+                //    //zoom in
+                //    if (mainCamera.GetComponent<Transform>().localPosition.z > minZoom)
+                //    {
+                //        mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, 0.5f));
+                //    }              
+                //}
+                //else if (pinchLength > Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position))
+                //{
+                //    //zoom out
+                //    if (mainCamera.GetComponent<Transform>().localPosition.z < maxZoom)
+                //    {
+                //        mainCamera.GetComponent<Transform>().Translate(new Vector3(0, 0, -0.5f));
+                //    }
+                //}
+
+                ////get length between both touches
+                //pinchLength = Vector3.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+            }
+            //no fingers touching so we stop zooming
+            else if (Input.touchCount == 0)
+            {
+                isZooming = false;
+            }
         }
-        //no fingers touching so we stop zooming
-        else if(Input.touchCount == 0)
+        else //use first person controls
         {
-            isZooming = false;
+            //code taken from archery game, should work
+
+            horizontal += Input.gyro.rotationRateUnbiased.x;
+            //horizontal = Mathf.Clamp(horizontal, -horizontalRange, horizontalRange);
+
+            vertical += Input.gyro.rotationRateUnbiased.y;
+            //vertical = Mathf.Clamp(vertical, -verticalRange, verticalRange);
+
+            Camera.main.transform.localRotation = Quaternion.Euler(-horizontal, -vertical, 0);
+            Camera.main.transform.Rotate(-Input.gyro.rotationRateUnbiased.x, -Input.gyro.rotationRateUnbiased.y, 0);
         }
 	}
+
+    /// <summary>
+    /// change the view from first to third person and vice versa
+    /// </summary>
+    public void ChangeView()
+    {
+        isFirstPerson = !isFirstPerson;
+    }
 }
